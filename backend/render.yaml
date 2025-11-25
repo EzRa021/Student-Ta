@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: lab-management-system
+    runtime: java
+    runtimeVersion: 21
+    buildCommand: cd backend && mvn clean package -DskipTests
+    startCommand: java -Dserver.port=$PORT -Dspring.profiles.active=prod $JAVA_OPTS -jar backend/target/lab-ms.jar
+    
+    autoDeploy: true
+    
+    envVars:
+      - key: SPRING_PROFILE
+        value: prod
+      - key: JAVA_OPTS
+        value: -Xmx512m -Xms256m
+      - key: JWT_SECRET
+        sync: false
+      - key: REFRESH_SECRET
+        sync: false
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+    
+    healthCheckPath: /actuator/health
+    healthCheckStartFailureThresholdSecs: 0
+    healthCheckThreshold: 5
+    healthCheckInterval: 5
+    
+  - type: mysql
+    name: lab-management-system-db
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow all for now, restrict in production
+    
+    databaseName: lms_db
+    user: lmsuser
+    
+    # Backups
+    backupRetention: 7
