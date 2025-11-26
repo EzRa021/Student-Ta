@@ -1,14 +1,14 @@
 spring:
+  config:
+    activate:
+      on-profile: prod
   application:
     name: lab-management-system
   
-  profiles:
-    active: ${SPRING_PROFILE:local}
-  
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/lms_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: ${DB_USER:lms_user}
-    password: ${DB_PASS:lms_password}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -41,16 +41,16 @@ spring:
       write-dates-as-timestamps: false
     time-zone: UTC
 
-# JWT Configuration
+# JWT Configuration - PRODUCTION (requires environment variables)
 jwt:
-  secret: ${JWT_SECRET:dev-secret-key-must-be-at-least-32-characters-long-for-security}
-  expiration: ${JWT_EXPIRY:900000}   # 15 minutes in milliseconds
-  refresh-secret: ${REFRESH_SECRET:dev-refresh-secret-key-must-be-at-least-32-chars-long}
-  refresh-expiration: ${REFRESH_EXPIRY:604800000}  # 7 days in milliseconds
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRY:900000}
+  refresh-secret: ${REFRESH_SECRET}
+  refresh-expiration: ${REFRESH_EXPIRY:604800000}
 
 # AES Encryption
 encryption:
-  aes-key: ${AES_KEY:0123456789ABCDEF0123456789ABCDEF}  # 32 chars for AES-256
+  aes-key: ${AES_KEY:0123456789ABCDEF0123456789ABCDEF}
 
 # Server Configuration
 server:
@@ -76,48 +76,14 @@ management:
       prometheus:
         enabled: true
 
-# Logging
-logging:
-  level:
-    root: INFO
-    com.lms: DEBUG
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.hibernate.SQL: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
----
-# Local Profile
-spring:
-  config:
-    activate:
-      on-profile: local
-  jpa:
-    show-sql: true
-
-logging:
-  level:
-    com.lms: DEBUG
-
----
-# Dev Profile
-spring:
-  config:
-    activate:
-      on-profile: dev
-
----
-# Prod Profile
-spring:
-  config:
-    activate:
-      on-profile: prod
-  jpa:
-    show-sql: false
-
+# Logging - PRODUCTION (minimal logging)
 logging:
   level:
     root: WARN
     com.lms: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

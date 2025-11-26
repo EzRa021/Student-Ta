@@ -50,21 +50,20 @@
 3. **Set Environment Variables on Render:**
    ```
    SPRING_PROFILE=prod
-   SERVER_PORT=8080
+   SERVER_PORT=5432
    
-   DB_URL=jdbc:mysql://your-render-db:3306/lms_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=false
-   DB_USER=your_db_user
-   DB_PASS=your_db_password
+   DB_URL=jdbc:postgresql://db_user:f22tx3LrUSodquh1yAupicDeXHRKrFdC@dpg-d4j2bt0dl3ps73e5kdb0-a/ta_2z19
+   DB_USER=db_user
+   DB_PASS=f22tx3LrUSodquh1yAupicDeXHRKrFdC
    
-   JWT_SECRET=<generate with: openssl rand -base64 32>
+   JWT_SECRET=gfyguugug7857456r56rtv56e5cyw4w3wc3wy45ww3
    JWT_EXPIRY=900000
-   REFRESH_SECRET=<generate with: openssl rand -base64 32>
+   REFRESH_SECRET=6t7r56476tyr56r767i6kuhuky78yo8iou89y787y78
    REFRESH_EXPIRY=604800000
    
    AES_KEY=0123456789ABCDEF0123456789ABCDEF
    JAVA_OPTS=-Xmx512m -Xms256m
    ```
-
 ### Step 4: Security Checklist
 
 ✅ **Secrets Management:**

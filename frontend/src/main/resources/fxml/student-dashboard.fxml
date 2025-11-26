@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.lms.ui.controller.StudentDashboardController" style="-fx-background-color: #f5f5f5;" stylesheets="@../css/professional-styles.css">
+    
+    <!-- Top Bar -->
+    <top>
+        <HBox spacing="15" style="-fx-padding: 15 20; -fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);">
+            <Label fx:id="userGreetingLabel" text="Welcome!" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #333333;" HBox.hgrow="ALWAYS"/>
+            <Button text="Logout" onAction="#handleLogout" style="-fx-padding: 8 20; -fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 4;"/>
+        </HBox>
+    </top>
+    
+    <!-- Main Content with Sidebar -->
+    <center>
+        <HBox spacing="0" style="-fx-background-color: #f5f5f5;">
+            
+            <!-- Sidebar Navigation -->
+            <VBox fx:id="sidebar" spacing="0" prefWidth="220" style="-fx-background-color: #2c3e50; -fx-padding: 20 0;">
+                <VBox spacing="15" style="-fx-padding: 20;">
+                    <Label text="Student Dashboard" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-padding: 0 0 20 0;"/>
+                    
+                    <VBox spacing="8">
+                        <Button fx:id="allRequestsBtn" text="📋 All Requests" onAction="#showAllRequests" 
+                                style="-fx-background-color: #34495e; -fx-text-fill: #ecf0f1; -fx-padding: 12 15; -fx-alignment: center-left; -fx-background-radius: 4; -fx-font-size: 14;"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="pendingRequestsBtn" text="⏳ Pending Requests" onAction="#showPendingRequests" 
+                                style="-fx-background-color: #34495e; -fx-text-fill: #ecf0f1; -fx-padding: 12 15; -fx-alignment: center-left; -fx-background-radius: 4; -fx-font-size: 14;"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="assignedRequestsBtn" text="👤 Assigned Requests" onAction="#showAssignedRequests" 
+                                style="-fx-background-color: #34495e; -fx-text-fill: #ecf0f1; -fx-padding: 12 15; -fx-alignment: center-left; -fx-background-radius: 4; -fx-font-size: 14;"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="answeredRequestsBtn" text="✅ Answered Requests" onAction="#showAnsweredRequests" 
+                                style="-fx-background-color: #34495e; -fx-text-fill: #ecf0f1; -fx-padding: 12 15; -fx-alignment: center-left; -fx-background-radius: 4; -fx-font-size: 14;"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="createRequestBtn" text="➕ Create Request" onAction="#showCreateRequest" 
+                                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 12 15; -fx-alignment: center-left; -fx-background-radius: 4; -fx-font-size: 14; -fx-font-weight: bold;"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+            
+            <!-- Main Content Area -->
+            <VBox spacing="0" HBox.hgrow="ALWAYS" style="-fx-background-color: #f5f5f5;">
+                
+                <!-- Content StackPane for switching views -->
+                <StackPane fx:id="contentPane" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                    
+                    <!-- All Requests View -->
+                    <VBox fx:id="allRequestsView" spacing="15" style="-fx-padding: 25;" visible="true">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="All Requests" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshAllBtn" text="🔄 Refresh" onAction="#refreshAllRequests" style="-fx-padding: 8 15; -fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                        </HBox>
+                        <Separator/>
+                        <TableView fx:id="allRequestsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 4;">
+                            <columns>
+                                <TableColumn fx:id="allTitleColumn" text="Title" prefWidth="250"/>
+                                <TableColumn fx:id="allStatusColumn" text="Status" prefWidth="120"/>
+                                <TableColumn fx:id="allCreatedAtColumn" text="Created" prefWidth="150"/>
+                                <TableColumn fx:id="allTaColumn" text="Assigned TA" prefWidth="150"/>
+                                <TableColumn fx:id="allActionsColumn" text="Actions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Pending Requests View -->
+                    <VBox fx:id="pendingRequestsView" spacing="15" style="-fx-padding: 25;" visible="false">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Pending Requests" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshPendingBtn" text="🔄 Refresh" onAction="#refreshPendingRequests" style="-fx-padding: 8 15; -fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                        </HBox>
+                        <Separator/>
+                        <TableView fx:id="pendingRequestsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 4;">
+                            <columns>
+                                <TableColumn fx:id="pendingTitleColumn" text="Title" prefWidth="250"/>
+                                <TableColumn fx:id="pendingCreatedAtColumn" text="Created" prefWidth="150"/>
+                                <TableColumn fx:id="pendingWaitTimeColumn" text="Wait Time" prefWidth="120"/>
+                                <TableColumn fx:id="pendingActionsColumn" text="Actions" prefWidth="200"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Assigned Requests View -->
+                    <VBox fx:id="assignedRequestsView" spacing="15" style="-fx-padding: 25;" visible="false">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Assigned Requests" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshAssignedBtn" text="🔄 Refresh" onAction="#refreshAssignedRequests" style="-fx-padding: 8 15; -fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                        </HBox>
+                        <Separator/>
+                        <TableView fx:id="assignedRequestsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 4;">
+                            <columns>
+                                <TableColumn fx:id="assignedTitleColumn" text="Title" prefWidth="250"/>
+                                <TableColumn fx:id="assignedTaColumn" text="Assigned TA" prefWidth="150"/>
+                                <TableColumn fx:id="assignedCreatedAtColumn" text="Created" prefWidth="150"/>
+                                <TableColumn fx:id="assignedActionsColumn" text="Actions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Answered/Resolved Requests View -->
+                    <VBox fx:id="answeredRequestsView" spacing="15" style="-fx-padding: 25;" visible="false">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Answered Requests" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshAnsweredBtn" text="🔄 Refresh" onAction="#refreshAnsweredRequests" style="-fx-padding: 8 15; -fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                        </HBox>
+                        <Separator/>
+                        <TableView fx:id="answeredRequestsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 4;">
+                            <columns>
+                                <TableColumn fx:id="answeredTitleColumn" text="Title" prefWidth="250"/>
+                                <TableColumn fx:id="answeredTaColumn" text="Answered By" prefWidth="150"/>
+                                <TableColumn fx:id="answeredResolvedAtColumn" text="Resolved" prefWidth="150"/>
+                                <TableColumn fx:id="answeredActionsColumn" text="Actions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Create Request View -->
+                    <VBox fx:id="createRequestView" spacing="20" style="-fx-padding: 25;" visible="false">
+                        <Label text="Create New Request" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        <Separator/>
+                        <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);">
+                            <VBox spacing="5">
+                                <Label text="Request Title *" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                                <TextField fx:id="requestTitleField" prefHeight="40" promptText="e.g., Help with Array Implementation" style="-fx-font-size: 14;"/>
+                            </VBox>
+                            <VBox spacing="5" VBox.vgrow="ALWAYS">
+                                <Label text="Description *" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                                <TextArea fx:id="requestDescriptionArea" wrapText="true" prefHeight="200" promptText="Describe what you need help with..." style="-fx-font-size: 14;"/>
+                            </VBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button fx:id="submitButton" text="Submit Request" onAction="#handleSubmitRequest"
+                                        style="-fx-font-size: 14; -fx-padding: 12 30; -fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 4; -fx-font-weight: bold;" 
+                                        prefWidth="200"/>
+                                <ProgressIndicator fx:id="submitProgressIndicator" prefWidth="30" prefHeight="30"/>
+                                <Label fx:id="submitStatusLabel" text="" style="-fx-font-size: 12;" HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                    
+                    <!-- Request Details View -->
+                    <VBox fx:id="requestDetailsView" spacing="15" style="-fx-padding: 25;" visible="false">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Button text="← Back" onAction="#goBackFromDetails" style="-fx-padding: 8 15; -fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                            <Label text="Request Details" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        </HBox>
+                        <Separator/>
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                            <VBox spacing="20" style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);">
+                                <VBox spacing="10">
+                                    <Label fx:id="detailTitleLabel" text="" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                    <Label fx:id="detailStatusLabel" text="" style="-fx-font-size: 14;"/>
+                                    <Label fx:id="detailTALabel" text="" style="-fx-font-size: 14;"/>
+                                    <Label fx:id="detailCreatedAtLabel" text="" style="-fx-font-size: 12; -fx-text-fill: #7f8c8d;"/>
+                                </VBox>
+                                <Separator/>
+                                <VBox spacing="10">
+                                    <Label text="Description:" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                                    <TextArea fx:id="detailDescriptionArea" wrapText="true" editable="false" prefHeight="150" style="-fx-font-size: 14;"/>
+                                </VBox>
+                                <Separator/>
+                                <VBox spacing="10">
+                                    <Label text="TA Replies:" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                                    <ListView fx:id="repliesListView" prefHeight="200" style="-fx-font-size: 13;"/>
+                                </VBox>
+                                <HBox spacing="10">
+                                    <Button fx:id="editButton" text="Edit Request" onAction="#handleEditRequest" 
+                                            style="-fx-padding: 10 20; -fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                                    <Button fx:id="deleteButton" text="Delete Request" onAction="#handleDeleteRequest" 
+                                            style="-fx-padding: 10 20; -fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 4;"/>
+                                </HBox>
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+                    
+                </StackPane>
+            </VBox>
+        </HBox>
+    </center>
+    
+</BorderPane>

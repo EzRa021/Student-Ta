@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+           fx:controller="com.lms.ui.controller.LoginController" stylesheets="@../css/professional-styles.css"
+           style="-fx-background-color: #f5f5f5;">
+
+    <!-- Background -->
+    <VBox style="-fx-background-color: linear-gradient(to bottom, #1976d2, #1565c0);" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"/>
+
+    <!-- Center login form -->
+    <VBox alignment="CENTER" spacing="0">
+        
+        <!-- Login card -->
+        <VBox spacing="25" style="-fx-background-color: white; -fx-padding: 40; -fx-border-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);"
+              prefWidth="380" prefHeight="500">
+            
+            <!-- Header -->
+            <VBox alignment="CENTER" spacing="10">
+                <Label text="Lab Management System" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #1976d2;" alignment="CENTER"/>
+                <Label text="Sign In" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333333;" alignment="CENTER"/>
+                <Label fx:id="backendStatusLabel" text="Checking backend..." style="-fx-font-size: 11; -fx-text-fill: #666666;" alignment="CENTER"/>
+            </VBox>
+            
+            <!-- Login form -->
+            <VBox spacing="15">
+                <VBox spacing="5">
+                    <Label text="Username or ID" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 12;"/>
+                    <TextField fx:id="idField" promptText="e.g., username or STU001 or TA001" prefHeight="40" 
+                               style="-fx-font-size: 13; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 3;"/>
+                </VBox>
+                
+                <VBox spacing="5">
+                    <Label text="Password" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 12;"/>
+                    <PasswordField fx:id="passwordField" promptText="Enter your password" prefHeight="40"
+                                   style="-fx-font-size: 13; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 3;"/>
+                </VBox>
+                
+                <CheckBox fx:id="rememberMeCheckbox" text="Remember me" style="-fx-font-size: 12; -fx-text-fill: #666666;"/>
+                
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="loginButton" text="Sign In" style="-fx-font-size: 14; -fx-padding: 12 40; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 3;" 
+                            prefWidth="200"/>
+                    <ProgressIndicator fx:id="loadingIndicator" prefWidth="30" prefHeight="30" visible="false"/>
+                </HBox>
+                
+                <Label fx:id="errorLabel" text="" style="-fx-text-fill: #d32f2f; -fx-font-size: 12;" wrapText="true" alignment="CENTER"/>
+            </VBox>
+            
+            <!-- Separator -->
+            <Separator style="-fx-padding: 0;"/>
+            
+            <!-- Register section -->
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Don't have an account?" style="-fx-font-size: 12; -fx-text-fill: #666666;"/>
+                <Button fx:id="goToRegisterButton" text="Create Account" style="-fx-font-size: 12; -fx-text-fill: #1976d2; -fx-font-weight: bold; -fx-border: none; -fx-background-color: transparent; -fx-cursor: hand;"/>
+            </VBox>
+        </VBox>
+        
+    </VBox>
+
+</StackPane>

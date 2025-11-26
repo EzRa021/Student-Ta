@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.lms.ui.controller.TADashboardController" 
+            styleClass="root-pane" 
+            stylesheets="@../css/modern-dashboard.css">
+    
+    <!-- Modern Top Navigation Bar -->
+    <top>
+        <HBox styleClass="top-navbar">
+            <HBox spacing="15" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Label text="TA Dashboard" styleClass="app-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                
+                <!-- Search Bar -->
+                <HBox styleClass="search-container" prefWidth="300">
+                    <TextField fx:id="globalSearchField" promptText="Search requests..." 
+                              styleClass="search-field" HBox.hgrow="ALWAYS"/>
+                    <Label text="🔍" styleClass="search-icon"/>
+                </HBox>
+            </HBox>
+            
+            <!-- User Profile Section -->
+            <HBox spacing="15" alignment="CENTER_RIGHT">
+                <Button fx:id="notificationBtn" text="🔔" styleClass="icon-button">
+                    <tooltip><Tooltip text="Notifications"/></tooltip>
+                </Button>
+                
+                <Separator orientation="VERTICAL" styleClass="vertical-separator"/>
+                
+                <MenuButton fx:id="userProfileBtn" styleClass="profile-menu">
+                    <graphic>
+                        <HBox spacing="10" alignment="CENTER">
+                            <Label text="👤" styleClass="profile-icon"/>
+                            <VBox spacing="2" alignment="CENTER_LEFT">
+                                <Label fx:id="userGreetingLabel" text="Welcome TA!" styleClass="profile-name"/>
+                                <Label text="Teaching Assistant" styleClass="profile-role"/>
+                            </VBox>
+                        </HBox>
+                    </graphic>
+                    <items>
+                        <MenuItem fx:id="userNameItem" text="Name: " disable="true"/>
+                        <MenuItem fx:id="userRoleItem" text="Role: " disable="true"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="⚙️ Settings" onAction="#handleSettings"/>
+                        <MenuItem text="❓ Help" onAction="#handleHelp"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="🚪 Logout" onAction="#handleLogout" styleClass="logout-item"/>
+                    </items>
+                </MenuButton>
+            </HBox>
+        </HBox>
+    </top>
+    
+    <!-- Main Content with Sidebar -->
+    <center>
+        <HBox spacing="0">
+            
+            <!-- Modern Sidebar -->
+            <VBox fx:id="sidebar" styleClass="modern-sidebar">
+                <!-- Statistics Cards in Sidebar -->
+                <VBox spacing="12" styleClass="stats-section">
+                    <Label text="Overview" styleClass="section-title"/>
+                    
+                    <HBox spacing="12" styleClass="stats-grid">
+                        <VBox styleClass="stat-card stat-pending">
+                            <Label fx:id="pendingCountLabel" text="0" styleClass="stat-number"/>
+                            <Label text="Pending" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-progress">
+                            <Label fx:id="inProgressCountLabel" text="0" styleClass="stat-number"/>
+                            <Label text="In Progress" styleClass="stat-label"/>
+                        </VBox>
+                    </HBox>
+                    
+                    <VBox styleClass="stat-card-full stat-resolved">
+                        <HBox alignment="CENTER" spacing="20">
+                            <VBox alignment="CENTER">
+                                <Label fx:id="resolvedCountLabel" text="0" styleClass="stat-number-large"/>
+                                <Label text="Resolved Today" styleClass="stat-label"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+                
+                <Separator styleClass="sidebar-separator"/>
+                
+                <!-- Navigation Menu -->
+                <VBox spacing="8" styleClass="nav-section">
+                    <Label text="Navigation" styleClass="section-title"/>
+                    
+                    <Button fx:id="allPendingBtn" text="📋 Pending Requests" 
+                            onAction="#showAllPending" styleClass="nav-button nav-button-active"/>
+                    <Button fx:id="inProgressBtn" text="⏳ In Progress" 
+                            onAction="#showInProgress" styleClass="nav-button"/>
+                    <Button fx:id="myAssignedBtn" text="👤 My Assigned" 
+                            onAction="#showMyAssigned" styleClass="nav-button"/>
+                    <Button fx:id="allRequestsBtn" text="📊 All Requests" 
+                            onAction="#showAllRequests" styleClass="nav-button"/>
+                    <Button fx:id="resolvedBtn" text="✅ Resolved" 
+                            onAction="#showResolvedRequests" styleClass="nav-button"/>
+                </VBox>
+                
+                <Region VBox.vgrow="ALWAYS"/>
+                
+                <!-- Quick Actions -->
+                <VBox spacing="8" styleClass="quick-actions">
+                    <Label text="Quick Actions" styleClass="section-title"/>
+                    <Button text="🔄 Refresh All" onAction="#refreshAllRequests" styleClass="action-button"/>
+                </VBox>
+            </VBox>
+            
+            <!-- Main Content Area -->
+            <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+                
+                <StackPane fx:id="contentPane" VBox.vgrow="ALWAYS">
+                    
+                    <!-- All Pending Requests View -->
+                    <VBox fx:id="allPendingView" spacing="20" styleClass="view-container" visible="true">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label text="Pending Requests" styleClass="card-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshPendingBtn" text="🔄" onAction="#refreshPendingRequests" 
+                                   styleClass="icon-button-small"/>
+                        </HBox>
+                        
+                        <TextField fx:id="pendingSearchField" promptText="🔍 Search by student or title..." 
+                                  styleClass="search-input"/>
+                        
+                        <TableView fx:id="pendingRequestsTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                            <columns>
+                                <TableColumn fx:id="studentColumn" text="Student" prefWidth="150"/>
+                                <TableColumn fx:id="titleColumn" text="Request" prefWidth="250"/>
+                                <TableColumn fx:id="createdAtColumn" text="Time" prefWidth="120"/>
+                                <TableColumn fx:id="actionColumn" text="Actions" prefWidth="200"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- All Requests View -->
+                    <VBox fx:id="allRequestsView" spacing="20" styleClass="view-container" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label text="All Requests" styleClass="view-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="toggleFilterBtn" text="🔧 Filters" 
+                                   onAction="#toggleAdvancedFilter" styleClass="button-secondary"/>
+                            <Button fx:id="refreshAllBtn" text="🔄 Refresh" 
+                                   onAction="#refreshAllRequests" styleClass="button-secondary"/>
+                        </HBox>
+                        
+                        <!-- Filter Panel -->
+                        <VBox fx:id="advancedFilterPanel" spacing="15" styleClass="filter-card" visible="false">
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <VBox spacing="5">
+                                    <Label text="Status" styleClass="filter-label"/>
+                                    <ComboBox fx:id="filterStatus" promptText="All" prefWidth="140"/>
+                                </VBox>
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label text="Search" styleClass="filter-label"/>
+                                    <TextField fx:id="allRequestsSearchField" 
+                                              promptText="Search..." HBox.hgrow="ALWAYS"/>
+                                </VBox>
+                                <Button text="Clear" onAction="#clearAllFilters" 
+                                       styleClass="button-clear" alignment="BOTTOM_LEFT"/>
+                            </HBox>
+                        </VBox>
+                        
+                        <!-- Simple Search -->
+                        <HBox fx:id="simpleSearchBox" alignment="CENTER_LEFT" visible="true">
+                            <TextField fx:id="allRequestsSearchFieldSimple" 
+                                      promptText="🔍 Search requests..." 
+                                      styleClass="search-input" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        
+                        <TableView fx:id="allRequestsTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                            <columns>
+                                <TableColumn fx:id="allStudentColumn" text="Student" prefWidth="130"/>
+                                <TableColumn fx:id="allTitleColumn" text="Request" prefWidth="250"/>
+                                <TableColumn fx:id="allStatusColumn" text="Status" prefWidth="110"/>
+                                <TableColumn fx:id="allCreatedAtColumn" text="Submitted" prefWidth="150"/>
+                                <TableColumn fx:id="allActionsColumn" text="Actions" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- My Assigned View -->
+                    <VBox fx:id="myAssignedView" spacing="20" styleClass="view-container" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label text="My Assigned Requests" styleClass="view-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshAssignedBtn" text="🔄 Refresh" 
+                                   onAction="#refreshMyAssigned" styleClass="button-secondary"/>
+                        </HBox>
+                        
+                        <TextField fx:id="assignedSearchField" 
+                                  promptText="🔍 Search my assignments..." 
+                                  styleClass="search-input"/>
+                        
+                        <TableView fx:id="myAssignedTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                            <columns>
+                                <TableColumn fx:id="assignedStudentColumn" text="Student" prefWidth="140"/>
+                                <TableColumn fx:id="assignedTitleColumn" text="Request" prefWidth="220"/>
+                                <TableColumn fx:id="assignedCreatedAtColumn" text="Submitted" prefWidth="150"/>
+                                <TableColumn fx:id="assignedStatusColumn" text="Status" prefWidth="120"/>
+                                <TableColumn fx:id="assignedActionsColumn" text="Actions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Resolved View -->
+                    <VBox fx:id="resolvedView" spacing="20" styleClass="view-container" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label text="Resolved Requests" styleClass="view-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshResolvedBtn" text="🔄 Refresh" 
+                                   onAction="#refreshResolvedRequests" styleClass="button-secondary"/>
+                        </HBox>
+                        
+                        <TextField fx:id="resolvedSearchField" 
+                                  promptText="🔍 Search resolved requests..." 
+                                  styleClass="search-input"/>
+                        
+                        <TableView fx:id="resolvedTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                            <columns>
+                                <TableColumn fx:id="resolvedStudentColumn" text="Student" prefWidth="140"/>
+                                <TableColumn fx:id="resolvedTitleColumn" text="Request" prefWidth="220"/>
+                                <TableColumn fx:id="resolvedCreatedAtColumn" text="Submitted" prefWidth="150"/>
+                                <TableColumn fx:id="resolvedResolvedAtColumn" text="Resolved" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- In Progress View -->
+                    <VBox fx:id="inProgressView" spacing="20" styleClass="view-container" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label text="In Progress Requests" styleClass="view-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshInProgressBtn" text="🔄 Refresh" 
+                                   onAction="#refreshInProgress" styleClass="button-secondary"/>
+                        </HBox>
+                        
+                        <TextField fx:id="inProgressSearchField" 
+                                  promptText="🔍 Search in-progress requests..." 
+                                  styleClass="search-input"/>
+                        
+                        <TableView fx:id="inProgressTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                            <columns>
+                                <TableColumn fx:id="inProgressStudentColumn" text="Student" prefWidth="140"/>
+                                <TableColumn fx:id="inProgressTitleColumn" text="Request" prefWidth="220"/>
+                                <TableColumn fx:id="inProgressAssignedColumn" text="Assigned To" prefWidth="120"/>
+                                <TableColumn fx:id="inProgressCreatedAtColumn" text="Submitted" prefWidth="140"/>
+                                <TableColumn fx:id="inProgressActionsColumn" text="Actions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Request Detail View (Full Page) -->
+                    <VBox fx:id="requestDetailView" spacing="20" styleClass="view-container" visible="false">
+                        <!-- Header with back button -->
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Button fx:id="backFromDetailBtn" text="← Back" onAction="#showPreviousView" 
+                                   styleClass="button-secondary"/>
+                            <Label text="Request Details" styleClass="view-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshDetailBtn" text="🔄 Refresh" 
+                                   onAction="#refreshRequestDetail" styleClass="button-secondary"/>
+                        </HBox>
+                        
+                        <!-- Main content in scrollpane for better handling of long conversations -->
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-fitsToHeight: true;">
+                            <VBox spacing="20" styleClass="card" style="-fx-padding: 20;">
+                                
+                                <!-- Request Header -->
+                                <VBox spacing="12" styleClass="request-header">
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label fx:id="detailTitleLabel" text="Request Title" styleClass="request-title"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Label fx:id="detailStatusLabel" text="Status" styleClass="status-badge"/>
+                                    </HBox>
+                                    <Label fx:id="detailStudentLabel" text="Student Name" styleClass="student-name"/>
+                                    <HBox spacing="20">
+                                        <Label fx:id="detailPriorityLabel" text="Priority: High" styleClass="priority-info"/>
+                                        <Label fx:id="detailAssignedLabel" text="Assigned to: Unassigned" styleClass="priority-info"/>
+                                        <Label fx:id="detailTimeLabel" text="Submitted: " styleClass="priority-info"/>
+                                    </HBox>
+                                </VBox>
+                                
+                                <Separator/>
+                                
+                                <!-- Description Section -->
+                                <VBox spacing="12">
+                                    <Label text="📝 Description" styleClass="section-label"/>
+                                    <TextArea fx:id="detailDescriptionArea" wrapText="true" prefHeight="120" 
+                                             editable="false" styleClass="description-area"/>
+                                </VBox>
+                                
+                                <Separator/>
+                                
+                                <!-- Replies/Conversation Section (Read-Only) -->
+                                <VBox spacing="12" VBox.vgrow="ALWAYS">
+                                    <Label text="💬 Conversation History" styleClass="section-label"/>
+                                    <ListView fx:id="detailRepliesListView" VBox.vgrow="ALWAYS" styleClass="replies-list" prefHeight="250"/>
+                                </VBox>
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+                    
+                    <!-- Reply Page View (Separate Full-Page for Composing Reply) -->
+                    <VBox fx:id="replyPageView" spacing="20" styleClass="view-container" visible="false">
+                        <!-- Header with back button -->
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Button fx:id="backFromReplyBtn" text="← Back" onAction="#showPreviousView" 
+                                   styleClass="button-secondary"/>
+                            <Label text="Reply to Request" styleClass="view-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        
+                        <!-- Main content in scrollpane -->
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-fitsToHeight: true;">
+                            <VBox spacing="20" styleClass="card" style="-fx-padding: 20;">
+                                
+                                <!-- Request Summary -->
+                                <VBox spacing="12" styleClass="request-header">
+                                    <Label text="Request Summary" styleClass="section-label"/>
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label fx:id="replyPageTitleLabel" text="Request Title" styleClass="request-title"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Label fx:id="replyPageStatusLabel" text="Status" styleClass="status-badge"/>
+                                    </HBox>
+                                    <Label fx:id="replyPageStudentLabel" text="Student Name" styleClass="student-name"/>
+                                    <HBox spacing="20">
+                                        <Label fx:id="replyPagePriorityLabel" text="Priority: High" styleClass="priority-info"/>
+                                        <Label fx:id="replyPageTimeLabel" text="Submitted: " styleClass="priority-info"/>
+                                    </HBox>
+                                </VBox>
+                                
+                                <Separator/>
+                                
+                                <!-- Request Description -->
+                                <VBox spacing="12">
+                                    <Label text="📝 Request Description" styleClass="section-label"/>
+                                    <TextArea fx:id="replyPageDescriptionArea" wrapText="true" prefHeight="100" 
+                                             editable="false" styleClass="description-area"/>
+                                </VBox>
+                                
+                                <Separator/>
+                                
+                                <!-- Conversation History -->
+                                <VBox spacing="12" VBox.vgrow="ALWAYS">
+                                    <Label text="💬 Previous Replies" styleClass="section-label"/>
+                                    <ListView fx:id="replyPageRepliesListView" VBox.vgrow="ALWAYS" styleClass="replies-list" prefHeight="200"/>
+                                </VBox>
+                                
+                                <Separator/>
+                                
+                                <!-- Reply Composer -->
+                                <VBox spacing="12">
+                                    <Label text="📝 Your Reply" styleClass="section-label"/>
+                                    <TextArea fx:id="replyPageTextArea" promptText="Type your reply here..." 
+                                             wrapText="true" prefRowCount="5" styleClass="reply-input"
+                                             style="-fx-font-size: 13; -fx-padding: 10; -fx-border-color: #ddd; -fx-border-width: 1;"/>
+                                    
+                                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                                        <ProgressIndicator fx:id="replyPageProgressIndicator" prefWidth="20" 
+                                                         prefHeight="20" visible="false"/>
+                                        <Button fx:id="replyPageSendButton" text="📤 Send Reply" 
+                                               onAction="#sendReplyFromReplyPage" styleClass="button-primary"
+                                               prefWidth="150"/>
+                                        <Separator orientation="VERTICAL" style="-fx-padding: 5;"/>
+                                        <Button fx:id="replyPageMarkResolvedButton" text="✅ Mark as Resolved" 
+                                               onAction="#markAsResolvedFromReplyPage" styleClass="button-resolve"
+                                               prefWidth="150" disable="true"/>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+                    
+                </StackPane>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>
