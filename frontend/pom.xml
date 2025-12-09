@@ -132,6 +132,292 @@
                     <finalName>LabManagementSystem</finalName>
                 </configuration>
             </plugin>
+
+            <!-- jpackage Maven Plugin for native installers -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <property environment="env"/>
+                                <condition property="jpackage.command" value="jpackage.exe">
+                                    <os family="windows"/>
+                                </condition>
+                                <property name="jpackage.command" value="jpackage" unless="jpackage.command"/>
+                                <!-- Only run jpackage if explicitly enabled via Maven profile -->
+                                <echo message="jpackage available at: ${jpackage.command}"/>
+                            </target>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <!-- Build Profiles for Cross-Platform Builds -->
+    <profiles>
+        <!-- Windows Profile - Creates EXE Installer -->
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-windows</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>jpackage</executable>
+                                    <arguments>
+                                        <argument>--input</argument>
+                                        <argument>${project.build.directory}</argument>
+                                        <argument>--name</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--main-jar</argument>
+                                        <argument>LabManagementSystem-executable.jar</argument>
+                                        <argument>--main-class</argument>
+                                        <argument>com.lms.ui.LabManagementApplication</argument>
+                                        <argument>--type</argument>
+                                        <argument>exe</argument>
+                                        <argument>--dest</argument>
+                                        <argument>${project.build.directory}/installers</argument>
+                                        <argument>--vendor</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--app-version</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>--java-options</argument>
+                                        <argument>-Xmx2g</argument>
+                                        <argument>--win-console</argument>
+                                        <argument>false</argument>
+                                        <argument>--win-per-user-install</argument>
+                                        <argument>true</argument>
+                                        <argument>--win-dir-chooser</argument>
+                                        <argument>true</argument>
+                                    </arguments>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- macOS Profile - Creates .app and .dmg -->
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-mac</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>jpackage</executable>
+                                    <arguments>
+                                        <argument>--input</argument>
+                                        <argument>${project.build.directory}</argument>
+                                        <argument>--name</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--main-jar</argument>
+                                        <argument>LabManagementSystem-executable.jar</argument>
+                                        <argument>--main-class</argument>
+                                        <argument>com.lms.ui.LabManagementApplication</argument>
+                                        <argument>--type</argument>
+                                        <argument>dmg</argument>
+                                        <argument>--dest</argument>
+                                        <argument>${project.build.directory}/installers</argument>
+                                        <argument>--vendor</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--app-version</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>--java-options</argument>
+                                        <argument>-Xmx2g</argument>
+                                        <argument>--mac-sign</argument>
+                                        <argument>false</argument>
+                                    </arguments>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Linux Profile - Creates .deb installer -->
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-linux</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>jpackage</executable>
+                                    <arguments>
+                                        <argument>--input</argument>
+                                        <argument>${project.build.directory}</argument>
+                                        <argument>--name</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--main-jar</argument>
+                                        <argument>LabManagementSystem-executable.jar</argument>
+                                        <argument>--main-class</argument>
+                                        <argument>com.lms.ui.LabManagementApplication</argument>
+                                        <argument>--type</argument>
+                                        <argument>deb</argument>
+                                        <argument>--dest</argument>
+                                        <argument>${project.build.directory}/installers</argument>
+                                        <argument>--vendor</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--app-version</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>--java-options</argument>
+                                        <argument>-Xmx2g</argument>
+                                    </arguments>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Manual Build Profile - Use this to build for specific OS -->
+        <profile>
+            <id>build-windows-exe</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-windows-manual</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>jpackage</executable>
+                                    <arguments>
+                                        <argument>--input</argument>
+                                        <argument>${project.build.directory}</argument>
+                                        <argument>--name</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--main-jar</argument>
+                                        <argument>LabManagementSystem-executable.jar</argument>
+                                        <argument>--main-class</argument>
+                                        <argument>com.lms.ui.LabManagementApplication</argument>
+                                        <argument>--type</argument>
+                                        <argument>exe</argument>
+                                        <argument>--dest</argument>
+                                        <argument>${project.build.directory}/installers</argument>
+                                        <argument>--vendor</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--app-version</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>--java-options</argument>
+                                        <argument>-Xmx2g</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Build for macOS -->
+        <profile>
+            <id>build-mac-dmg</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-mac-manual</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>jpackage</executable>
+                                    <arguments>
+                                        <argument>--input</argument>
+                                        <argument>${project.build.directory}</argument>
+                                        <argument>--name</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--main-jar</argument>
+                                        <argument>LabManagementSystem-executable.jar</argument>
+                                        <argument>--main-class</argument>
+                                        <argument>com.lms.ui.LabManagementApplication</argument>
+                                        <argument>--type</argument>
+                                        <argument>dmg</argument>
+                                        <argument>--dest</argument>
+                                        <argument>${project.build.directory}/installers</argument>
+                                        <argument>--vendor</argument>
+                                        <argument>Lab Management System</argument>
+                                        <argument>--app-version</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>--java-options</argument>
+                                        <argument>-Xmx2g</argument>
+                                        <argument>--mac-sign</argument>
+                                        <argument>false</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

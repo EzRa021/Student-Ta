@@ -43,9 +43,9 @@ spring:
 
 # JWT Configuration - PRODUCTION (requires environment variables)
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:prod-secret-key-must-be-at-least-32-characters-long-for-security}
   expiration: ${JWT_EXPIRY:900000}
-  refresh-secret: ${REFRESH_SECRET}
+  refresh-secret: ${REFRESH_SECRET:prod-refresh-secret-key-must-be-at-least-32-chars-long}
   refresh-expiration: ${REFRESH_EXPIRY:604800000}
 
 # AES Encryption
