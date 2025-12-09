@@ -162,13 +162,11 @@
 
     <!-- Build Profiles for Cross-Platform Builds -->
     <profiles>
-        <!-- Windows Profile - Creates EXE Installer -->
+        <!-- Windows Profile - Creates EXE Installer (DISABLED - use -P build-windows-exe instead) -->
         <profile>
             <id>windows</id>
             <activation>
-                <os>
-                    <family>windows</family>
-                </os>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -204,12 +202,6 @@
                                         <argument>${project.version}</argument>
                                         <argument>--java-options</argument>
                                         <argument>-Xmx2g</argument>
-                                        <argument>--win-console</argument>
-                                        <argument>false</argument>
-                                        <argument>--win-per-user-install</argument>
-                                        <argument>true</argument>
-                                        <argument>--win-dir-chooser</argument>
-                                        <argument>true</argument>
                                     </arguments>
                                     <skip>false</skip>
                                 </configuration>
@@ -220,13 +212,11 @@
             </build>
         </profile>
 
-        <!-- macOS Profile - Creates .app and .dmg -->
+        <!-- macOS Profile - Creates .app and .dmg (DISABLED - use -P build-mac-dmg instead) -->
         <profile>
             <id>mac</id>
             <activation>
-                <os>
-                    <family>mac</family>
-                </os>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -262,8 +252,6 @@
                                         <argument>${project.version}</argument>
                                         <argument>--java-options</argument>
                                         <argument>-Xmx2g</argument>
-                                        <argument>--mac-sign</argument>
-                                        <argument>false</argument>
                                     </arguments>
                                     <skip>false</skip>
                                 </configuration>
@@ -274,13 +262,11 @@
             </build>
         </profile>
 
-        <!-- Linux Profile - Creates .deb installer -->
+        <!-- Linux Profile - Creates .deb installer (DISABLED - use -P build-linux-deb instead) -->
         <profile>
             <id>linux</id>
             <activation>
-                <os>
-                    <family>linux</family>
-                </os>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -331,43 +317,7 @@
             <id>build-windows-exe</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>jpackage-windows-manual</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>jpackage</executable>
-                                    <arguments>
-                                        <argument>--input</argument>
-                                        <argument>${project.build.directory}</argument>
-                                        <argument>--name</argument>
-                                        <argument>Lab Management System</argument>
-                                        <argument>--main-jar</argument>
-                                        <argument>LabManagementSystem-executable.jar</argument>
-                                        <argument>--main-class</argument>
-                                        <argument>com.lms.ui.LabManagementApplication</argument>
-                                        <argument>--type</argument>
-                                        <argument>exe</argument>
-                                        <argument>--dest</argument>
-                                        <argument>${project.build.directory}/installers</argument>
-                                        <argument>--vendor</argument>
-                                        <argument>Lab Management System</argument>
-                                        <argument>--app-version</argument>
-                                        <argument>${project.version}</argument>
-                                        <argument>--java-options</argument>
-                                        <argument>-Xmx2g</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!-- Just package as JAR, don't try to create installer -->
                 </plugins>
             </build>
         </profile>
@@ -377,45 +327,7 @@
             <id>build-mac-dmg</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>jpackage-mac-manual</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>jpackage</executable>
-                                    <arguments>
-                                        <argument>--input</argument>
-                                        <argument>${project.build.directory}</argument>
-                                        <argument>--name</argument>
-                                        <argument>Lab Management System</argument>
-                                        <argument>--main-jar</argument>
-                                        <argument>LabManagementSystem-executable.jar</argument>
-                                        <argument>--main-class</argument>
-                                        <argument>com.lms.ui.LabManagementApplication</argument>
-                                        <argument>--type</argument>
-                                        <argument>dmg</argument>
-                                        <argument>--dest</argument>
-                                        <argument>${project.build.directory}/installers</argument>
-                                        <argument>--vendor</argument>
-                                        <argument>Lab Management System</argument>
-                                        <argument>--app-version</argument>
-                                        <argument>${project.version}</argument>
-                                        <argument>--java-options</argument>
-                                        <argument>-Xmx2g</argument>
-                                        <argument>--mac-sign</argument>
-                                        <argument>false</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!-- Just package as JAR, don't try to create installer -->
                 </plugins>
             </build>
         </profile>
