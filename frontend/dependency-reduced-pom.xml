@@ -37,11 +37,25 @@
               <transformers>
                 <transformer>
                   <mainClass>com.lms.ui.LabManagementApplication</mainClass>
+                  <manifestEntries>
+                    <Multi-Release>true</Multi-Release>
+                  </manifestEntries>
                 </transformer>
+                <transformer />
               </transformers>
               <finalName>LabManagementSystem</finalName>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>executable</shadedClassifierName>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
